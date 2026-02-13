@@ -16,7 +16,7 @@ const Login = () => {
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
-            setError('Invalid email or password');
+            setError(err.response?.data?.message || 'Connection error. Is the server running?');
         }
     };
 

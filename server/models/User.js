@@ -6,29 +6,30 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: {
         type: String,
-        enum: ['kiosk', 'chemist', 'admin'],
-        default: 'kiosk'
+        enum: ['admin', 'chemist', 'kiosk'],
+        required: true
     },
-    phone: { type: String },
-    address: { type: String },
+    phoneNumber: { type: String },
     location: {
         lat: Number,
-        lng: Number
+        lng: Number,
+        address: String
     },
-    isVerified: { type: Boolean, default: false },
-    status: { type: String, enum: ['active', 'blocked', 'pending'], default: 'pending' },
-    businessName: { type: String },
+    isVerified: { type: Boolean, default: false }, // For chemists
+    status: { type: String, enum: ['active', 'blocked', 'pending'], default: 'active' },
+    businessName: { type: String }, // For chemists
     rating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 },
+    notifications: [{
+        title: String,
+        message: String,
+        type: { type: String, enum: ['order', 'health', 'system', 'emergency'] },
+        read: { type: Boolean, default: false },
+        createdAt: { type: Date, default: Date.now }
+    }],
     activityLogs: [{
         action: String,
         timestamp: { type: Date, default: Date.now }
-    }],
-    notifications: [{
-        message: String,
-        type: String, // 'order', 'emergency', 'status'
-        read: { type: Boolean, default: false },
-        createdAt: { type: Date, default: Date.now }
     }]
 }, { timestamps: true });
 

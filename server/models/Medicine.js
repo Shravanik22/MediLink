@@ -6,18 +6,27 @@ const MedicineSchema = new mongoose.Schema({
     category: { type: String },
     price: { type: Number, required: true },
     stockQuantity: { type: Number, required: true },
-    lowStockThreshold: { type: Number, default: 10 },
-    expiryDate: { type: Date },
+    expiryDate: { type: Date, required: true },
+    prescriptionRequired: { type: Boolean, default: false },
     supplierName: { type: String },
     batchNumber: { type: String },
-    prescriptionRequired: { type: Boolean, default: false },
+    lowStockThreshold: { type: Number, default: 10 },
     isDeleted: { type: Boolean, default: false },
     isOutOfStock: { type: Boolean, default: false },
     chemist: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
-// Index for expiry and stock checks
+// Auto update isOutOfStock virtual-like behavior
+MedicineSchema.pre('save', function (next) {
+    if (this.stockQuantity <= 0) {
+        this.isOutOfStock = true;
+    } else {
+        this.isOutOfStock = false;
+    }
+    next();
+});
+
+MedicineSchema.index({ name: 'text', genericName: 'text' });
 MedicineSchema.index({ expiryDate: 1 });
-MedicineSchema.index({ stockQuantity: 1 });
 
 module.exports = mongoose.model('Medicine', MedicineSchema);
